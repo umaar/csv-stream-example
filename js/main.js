@@ -12,7 +12,7 @@ class MyTransformer {
 		let result = this.decoder.decode(chunk);
 
 		if (this.pending.length > 0) {
-			result = this.pending[0] + result;
+			result += this.pending[0];
 			this.pending = [];
 		}
 
@@ -30,19 +30,17 @@ class MyTransformer {
 
 async function init() {
 	const response = await fetch('data/data.csv');
-	const stream = response.body.pipeThrough(new TransformStream(new MyTransformer()));
+	const myTransformerInstance = new MyTransformer();
+	const transformStreamInstance = new TransformStream(myTransformerInstance);
+	const stream = response.body.pipeThrough(transformStreamInstance);
 	const reader = stream.getReader();
 
 	const allResults = [];
 
 	while (true) {
 		const {value, done} = await reader.read();
-
 		allResults.push(value);
-
-		if (done) {
-			break;
-		}
+		if (done) break;
 	}
 
 	verifyResults(allResults);
