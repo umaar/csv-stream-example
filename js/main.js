@@ -1,7 +1,5 @@
 /* global fetch, TextDecoder */
 
-import {TransformStream} from './vendor/transform-stream.js';
-
 class MyTransformer {
 	start() {
 		this.pending = [];
