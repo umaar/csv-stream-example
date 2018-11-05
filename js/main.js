@@ -1,5 +1,7 @@
 /* global fetch, TextDecoder */
 
+let index = 0;
+
 class MyTransformer {
 	start() {
 		this.pending = [];
@@ -10,7 +12,7 @@ class MyTransformer {
 		let result = this.decoder.decode(chunk);
 
 		if (this.pending.length > 0) {
-			result += this.pending[0];
+			result = this.pending[0] + result;
 			this.pending = [];
 		}
 
@@ -41,13 +43,18 @@ async function init() {
 		if (done) break;
 	}
 
-	verifyResults(allResults);
+	if (verifyResults(allResults)) {
+		console.log('✅️ It worked!')
+	} else {
+		console.error('❌️ Unexpected results')
+	}
 }
 
 function verifyResults(results) {
 	const amount = 9999;
+	let i = 0;
 
-	for (let i = 0; i < amount; i++) {
+	for (; i < amount; i++) {
 		const actualResult = results[i];
 		const expectedResult = `${i},hello world`;
 		const matches = actualResult === expectedResult;
@@ -60,6 +67,8 @@ function verifyResults(results) {
 			break;
 		}
 	}
+
+	return i === amount;
 }
 
 init();
